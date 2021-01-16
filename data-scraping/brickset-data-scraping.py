@@ -5,7 +5,9 @@ import re
 
 def get_sets_page(url):
     response = requests.get(url)
-    return response.text
+    if response.status_code == 200:
+        return response.text
+    return None
 
 
 def get_dict_of_endpoints(sets_page_html):
@@ -26,8 +28,8 @@ def get_dict_of_endpoints(sets_page_html):
 
 def main():
     sets_page_html = get_sets_page("https://brickset.com/sets")
-    endpoints_dict = get_dict_of_endpoints(sets_page_html)
-    print(endpoints_dict)
+    if sets_page_html is not None:
+        endpoints_dict = get_dict_of_endpoints(sets_page_html)
 
 
 if __name__ == "__main__":
