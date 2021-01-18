@@ -4,14 +4,15 @@ import re
 import math
 import logging
 import logging.config
+import yaml
 
 
 def config_logging():
-    # TODO better logging config
-    # TODO add more loggsssss
-    open('./log/example.log', "w").close()
-    logging.basicConfig(filename='./log/example.log', level=logging.DEBUG,
-                        format='%(asctime)s - %(levelname)s - %(message)s')
+    config_file = open("./config/brickset-scrapping.yaml")
+    parsed_config_file = yaml.load(config_file, Loader=yaml.FullLoader)
+    open(parsed_config_file['logging']['file'], "w").close()
+    logging.basicConfig(filename=parsed_config_file['logging']['file'], level=logging.DEBUG,
+                        format=parsed_config_file['logging']['format'])
 
 
 def get_sets_page(url):
@@ -47,9 +48,11 @@ def get_list_of_single_theme_list(url):
     if number_of_pages > 1:
         for i in range(1, number_of_pages + 1):
             page_url = "{0}/page-{1}".format(url, i)
+            logging.debug("Get data from: {0}".format(page_url))
             page_soup = get_soup_of_url(page_url)
             single_them_list += get_list_of_sets_data(page_soup)
     else:
+        logging.debug("Get data from single page.")
         single_them_list += get_list_of_sets_data(soup)
     return single_them_list
 
@@ -68,6 +71,7 @@ def get_list_of_sets_data(soup):
         data = get_single_set_data(article)
         if data is not None:
             list_of_sets.append(data)
+    logging.debug("List of sets: {0}".format(list_of_sets))
     return list_of_sets
 
 
@@ -83,6 +87,7 @@ def get_single_set_data(article):
         pieces_num = pieces.getText()
         data = {"model_id": model_id, "theme": theme, "year": year, "img_link": img_link,
                 "pieces_num": pieces_num, "pieces_url": pieces_url}
+        logging.debug("Retrieved data: {0}".format(data))
         return data
     return None
 
@@ -98,10 +103,12 @@ def get_list_of_all_themes(api_url, endpoints_list):
     list_of_all_themes = []
     for url in endpoints_list:
         new_theme = {}
+        logging.debug('Get data from: {0}{1}'.format(api_url, url))
         theme_list = get_list_of_single_theme_list('{0}{1}'.format(api_url, url))
         if len(theme_list) > 0:
             new_theme["list"] = theme_list
             new_theme["name"] = theme_list[0]["theme"]
+            logging.debug("{0} has: {1}".format(new_theme["name"], new_theme["list"]))
             list_of_all_themes.append(new_theme)
     return list_of_all_themes
 
@@ -112,6 +119,7 @@ def main():
     api_url = "https://brickset.com"
     sets_page_html = get_sets_page(api_url + "/sets")
     if sets_page_html is not None:
+        logging.debug("Sets page exists.")
         endpoints_dict = get_dict_of_endpoints(sets_page_html)
         result = get_list_of_all_themes(api_url, endpoints_dict["theme"])
         print(result)
