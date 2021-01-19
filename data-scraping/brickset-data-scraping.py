@@ -227,6 +227,25 @@ def add_instructions(delta, url):
     return updated_delta
 
 
+def get_instructions_of_single_page(page_soup, instructions_dict):
+    tr = page_soup.find("table", class_="neattable").find("tbody").find_all("tr")
+    for row in tr:
+        a = row.find_all("td", attrs={'class': None})[0].find("a")
+        model_id = row.find("td", class_="hideindialog hideintabs").getText()
+        instruction_link = None
+        if a.has_attr("href"):
+            instruction_link = a["href"]
+        if instruction_link is not None:
+            if model_id in instructions_dict:
+                links_list = instructions_dict[model_id]
+                if instruction_link not in links_list and is_link_working(instruction_link):
+                    links_list.append(instruction_link)
+            else:
+                if is_link_working(instruction_link):
+                    instructions_dict[model_id] = [instruction_link]
+    return instructions_dict
+
+
 def get_instructions_dict(endpoints_list, url):
     instructions_dict = {}
     logging.debug("Get instructions dict")
@@ -234,20 +253,16 @@ def get_instructions_dict(endpoints_list, url):
         page_html = get_page(url + endpoint)
         soup = BeautifulSoup(page_html, 'html.parser')
         if instructions_exist(soup):
-            tr = soup.find("table", class_="neattable").find("tbody").find("tr")
-            a = tr.find_all("td", attrs={'class': None})[0].find("a")
-            model_id = tr.find("td", class_="hideindialog hideintabs").getText()
-            instruction_link = None
-            if a.has_attr("href"):
-                instruction_link = a["href"]
-            if instruction_link is not None:
-                if model_id in instructions_dict:
-                    links_list = instructions_dict[model_id]
-                    if instruction_link not in links_list and is_link_working(instruction_link):
-                        links_list.append(instruction_link)
-                else:
-                    if is_link_working(instruction_link):
-                        instructions_dict[model_id] = [instruction_link]
+            number_of_pages = get_number_of_pages(soup)
+            if number_of_pages > 1:
+                for i in range(1, number_of_pages + 1):
+                    page_url = "{0}{1}/page-{2}".format(url, endpoint, i)
+                    logging.debug("Get instructions from: {0}".format(page_url))
+                    page_soup = get_soup_of_url(page_url)
+                    instructions_dict = get_instructions_of_single_page(page_soup, instructions_dict)
+            else:
+                logging.debug("Get instructions from single page.")
+                instructions_dict = get_instructions_of_single_page(soup, instructions_dict)
     return instructions_dict
 
 
