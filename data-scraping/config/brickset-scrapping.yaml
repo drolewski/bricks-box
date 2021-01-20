@@ -1,8 +1,10 @@
 ---
 logging:
-  file: './log/example.log'
+  file: './log/scrapping.log'
+  path: './log/'
   format: '%(asctime)s - %(levelname)s - %(message)s'
 data:
+  path: './data/'
   endpoints_file: './data/endpoints.json'
   sets_by_theme_file: './data/sets_by_theme.json'
-  delta_file: './data/delta_file.json'
+  delta_file: './data/delta.json'

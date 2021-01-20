@@ -4,6 +4,7 @@ import logging.config
 import math
 import os.path
 import re
+from datetime import date, datetime
 
 import requests
 import yaml
@@ -14,7 +15,6 @@ def config():
     global config_file
     config_file_d = open("./config/brickset-scrapping.yaml")
     config_file = yaml.load(config_file_d, Loader=yaml.FullLoader)
-    open(config_file['logging']['file'], "w").close()
     logging.basicConfig(handlers=[logging.FileHandler(config_file['logging']['file'], 'w', 'utf-8')],
                         level=logging.DEBUG,
                         format=config_file['logging']['format'])
@@ -288,10 +288,7 @@ def update_instructions_in_delta(delta, instructions_dict):
     return delta
 
 
-def main():
-    config_file_d = config()
-    logging.debug("Script started!")
-    api_url = "https://brickset.com"
+def get_data_set(api_url):
     sets_page_html = get_page(api_url + "/sets")
     if sets_page_html is not None:
         logging.debug("Sets page exists.")
@@ -301,7 +298,57 @@ def main():
         updated_delta = add_instructions(delta, api_url)
         upserted_data = upsert_sets_by_theme(config_file['data']['sets_by_theme_file'], updated_delta)
         save_to_file(config_file['data']['sets_by_theme_file'], upserted_data)
+
+
+def cleanup_prepared_files():
+    logging.debug("Cleanup files.")
+    remove_old_file(config_file['data']['endpoints_file'], config_file['data']['path'])
+    remove_old_file(config_file['data']['delta_file'], config_file['data']['path'])
+    remove_old_file(config_file['logging']['file'], config_file['logging']['path'])
+    rename_data_file(config_file['data']['endpoints_file'])
+    rename_data_file(config_file['data']['delta_file'])
+    rename_logging_file()
+
+
+def remove_old_file(file, path):
+    list_of_files = os.listdir(path)
+    filename = file.split("/")[-1].split(".")[0]
+    matched_files = list(filter(lambda f: re.match(filename + ".*", f), list_of_files))
+    if len(matched_files) > 3:
+        matched_files.remove(file.split("/")[-1])
+        matched_files.sort(key=lambda d: datetime.strptime(d.split(".")[1], "%d-%m-%Y"))
+        logging.debug("Remove old file: {0}".format(path + matched_files[0]))
+        os.remove(path + matched_files[0])
+
+
+def rename_data_file(file):
+    filename = file.split("/")[-1].split(".")[0]
+    new_date = date.today().strftime("%d-%m-%Y")
+    new_filename = "{0}{1}.{2}.json".format(config_file['data']["path"], filename, new_date)
+    if os.path.isfile(new_filename):
+        os.remove(new_filename)
+    logging.debug("Rename data file to: {0}".format(new_filename))
+    os.rename(file, new_filename)
+
+
+def rename_logging_file():
+    filename = config_file['logging']['file'].split("/")[-1].split('.')[0]
+    new_date = date.today().strftime("%d-%m-%Y")
+    new_filename = "{0}{1}.{2}.log".format(config_file['logging']["path"], filename, new_date)
+    if os.path.isfile(new_filename):
+        os.remove(new_filename)
+    logging.debug("Rename logging file to: {0}".format(new_filename))
+    logging.shutdown()
+    os.rename(config_file['logging']['file'], new_filename)
+
+
+def main():
+    config_file_d = config()
+    logging.debug("Script started!")
+    api_url = "https://brickset.com"
+    get_data_set(api_url)
     logging.debug("Script stopped!")
+    cleanup_prepared_files()
     config_file_d.close()
 
 
