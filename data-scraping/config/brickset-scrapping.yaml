@@ -1,12 +1,12 @@
 ---
 logging:
-  file: './log/scrapping.log'
-  path: './log/'
+  file: 'FILL'
+  path: 'FILL'
   format: '%(asctime)s - %(levelname)s - %(message)s'
 data:
-  path: './data/'
-  endpoints_file: './data/endpoints.json'
-  sets_by_theme_file: './data/sets_by_theme.json'
-  delta_file: './data/delta.json'
+  path: 'FILL'
+  endpoints_file: 'FILL'
+  sets_by_theme_file: 'FILL'
+  delta_file: 'FILL'
 api:
-  url: 'https://brickset.com'
+  url: 'FILL'
