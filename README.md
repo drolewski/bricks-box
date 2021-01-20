@@ -1,6 +1,11 @@
 # Bricks box
 
-### brickset-scrapping.yaml
+## Data Scrapping
+
+### Start
+```./brickset-data-scraping.py <configuration-file-path>```
+
+### Configuration: brickset-scrapping.yaml
 
 field | default value | required | description
 --- | --- | --- | ---

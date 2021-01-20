@@ -151,5 +151,5 @@ crashlytics-build.properties
 fabric.properties
 
 # Additional config fles
-/config/brickset-local.yaml
-/config/brickset-raspberry.yaml
+/data-scraping/config/brickset-raspberry.yaml
+/data-scraping/config/brickset-local.yaml

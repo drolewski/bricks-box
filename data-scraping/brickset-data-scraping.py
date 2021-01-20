@@ -4,6 +4,7 @@ import logging.config
 import math
 import os.path
 import re
+import sys
 from datetime import date, datetime
 
 import requests
@@ -11,9 +12,9 @@ import yaml
 from bs4 import BeautifulSoup
 
 
-def config():
+def config(config_src):
     global config_file
-    config_file_d = open("./config/brickset-scrapping.yaml")
+    config_file_d = open(config_src)
     config_file = yaml.load(config_file_d, Loader=yaml.FullLoader)
     logging.basicConfig(handlers=[logging.FileHandler(config_file['logging']['file'], 'w', 'utf-8')],
                         level=logging.DEBUG,
@@ -343,7 +344,7 @@ def rename_logging_file():
 
 
 def main():
-    config_file_d = config()
+    config_file_d = config(sys.argv[1])
     logging.debug("Script started!")
     api_url = config_file['api']['url']
     get_data_set(api_url)
