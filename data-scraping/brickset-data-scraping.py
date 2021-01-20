@@ -345,7 +345,7 @@ def rename_logging_file():
 def main():
     config_file_d = config()
     logging.debug("Script started!")
-    api_url = "https://brickset.com"
+    api_url = config_file['api']['url']
     get_data_set(api_url)
     logging.debug("Script stopped!")
     cleanup_prepared_files()

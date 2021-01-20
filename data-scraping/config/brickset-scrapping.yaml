@@ -8,3 +8,5 @@ data:
   endpoints_file: './data/endpoints.json'
   sets_by_theme_file: './data/sets_by_theme.json'
   delta_file: './data/delta.json'
+api:
+  url: 'https://brickset.com'
