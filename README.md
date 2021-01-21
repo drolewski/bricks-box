@@ -1,6 +1,6 @@
 # Bricks box
 
-## Data Scrapping
+## Data Scraping
 
 ### Start
 ```./brickset-data-scraping.py <configuration-file-path>```
