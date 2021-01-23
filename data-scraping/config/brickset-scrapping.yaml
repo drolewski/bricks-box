@@ -8,5 +8,6 @@ data:
   endpoints_file: 'FILL'
   sets_by_theme_file: 'FILL'
   delta_file: 'FILL'
+  instructions_file: 'FILL'
 api:
   url: 'FILL'

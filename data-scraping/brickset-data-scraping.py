@@ -24,6 +24,10 @@ def config(config_src):
         open(config_file['data']['endpoints_file'], "w").close()
         logging.debug("File created: {0}".format(config_file['data']['endpoints_file']))
 
+    if not os.path.isfile(config_file['data']['instructions_file']):
+        open(config_file['data']['instructions_file'], "w").close()
+        logging.debug("File created: {0}".format(config_file['data']['instructions_file']))
+
     if not os.path.isfile(config_file['data']['sets_by_theme_file']):
         sets_file = open(config_file['data']['sets_by_theme_file'], "w")
         sets_file.write("[]")
@@ -239,11 +243,10 @@ def get_instructions_of_single_page(page_soup, instructions_dict):
         if instruction_link is not None:
             if model_id in instructions_dict:
                 links_list = instructions_dict[model_id]
-                if instruction_link not in links_list and is_link_working(instruction_link):
+                if instruction_link not in links_list:
                     links_list.append(instruction_link)
             else:
-                if is_link_working(instruction_link):
-                    instructions_dict[model_id] = [instruction_link]
+                instructions_dict[model_id] = [instruction_link]
     return instructions_dict
 
 
@@ -264,6 +267,8 @@ def get_instructions_dict(endpoints_list, url):
             else:
                 logging.debug("Get instructions from single page.")
                 instructions_dict = get_instructions_of_single_page(soup, instructions_dict)
+
+    save_to_file(config_file['data']['instructions_file'], instructions_dict)
     return instructions_dict
 
 
@@ -281,12 +286,19 @@ def update_instructions_in_delta(delta, instructions_dict):
     logging.debug("Add instructions to delta")
     for key, value in instructions_dict.items():
         for theme in delta:
-            model = next(filter(lambda i: str(i["model_id"])[
-                                          :str(i["model_id"]).index("-") if "-" in str(i["model_id"]) else len(
-                                              i["model_id"])] == key, theme["list"]))
+            model = list(filter(lambda i: str(i["model_id"])[:str(i["model_id"]).index("-") if "-" in str(i["model_id"]) else len(i["model_id"])] == key, theme["list"]))
             if model:
-                model["instructions"] = value
+                checked_instructions = get_checked_instructions(value)
+                model[0]["instructions"] = checked_instructions
     return delta
+
+
+def get_checked_instructions(value):
+    checked_instructions = []
+    for i in value:
+        if is_link_working(i):
+            checked_instructions.append(i)
+    return checked_instructions
 
 
 def get_data_set(api_url):
