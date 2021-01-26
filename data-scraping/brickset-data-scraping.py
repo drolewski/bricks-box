@@ -145,11 +145,18 @@ def get_list_of_all_themes(api_url, endpoints_list):
         new_theme = {}
         logging.debug('Get data from: {0}{1}'.format(api_url, url))
         theme_list = get_list_of_single_theme_list('{0}{1}'.format(api_url, url))
-        if len(theme_list) > 0:
-            new_theme["name"] = theme_list[0]["theme"]
-            new_theme["list"] = theme_list
-            logging.debug("Save Theme: {0}".format(new_theme["name"]))
-            list_of_all_themes.append(new_theme)
+        if config_file['technic']:
+            if len(theme_list) > 0 and theme_list[0]["theme"] == "Technic":
+                new_theme["name"] = theme_list[0]["theme"]
+                new_theme["list"] = theme_list
+                logging.debug("Save Theme: {0}".format(new_theme["name"]))
+                list_of_all_themes.append(new_theme)
+        else:
+            if len(theme_list) > 0:
+                new_theme["name"] = theme_list[0]["theme"]
+                new_theme["list"] = theme_list
+                logging.debug("Save Theme: {0}".format(new_theme["name"]))
+                list_of_all_themes.append(new_theme)
     return list_of_all_themes
 
 

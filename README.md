@@ -18,3 +18,4 @@ data.sets_by_theme_file | - | true | Absolute path to bricks set file
 data.delta_file | - | true | Absolute path to single run delta file
 data.instructions_file | - | true | Absolute path to instructions file
 api.url | - | true | Url to api
+technic | - | true | Download only LEGO Technic data
