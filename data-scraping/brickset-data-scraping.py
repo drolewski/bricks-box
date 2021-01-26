@@ -126,7 +126,7 @@ def get_single_set_data(article):
         pieces_url = pieces["href"]
         pieces_num = pieces.getText()
         data = {"model_id": model_id, "name": name, "theme": theme, "year": year, "img_link": img_link,
-                "pieces_num": pieces_num, "pieces_url": pieces_url, "instructions": None}
+                "pieces_num": pieces_num, "pieces_url": pieces_url, "instructions": None, "pieces": []}
         logging.debug("Retrieved data of model: {0}".format(data))
         return data
     return None
@@ -308,6 +308,27 @@ def get_checked_instructions(value):
     return checked_instructions
 
 
+def get_list_of_inventory(api_url, delta):
+    for single_set in delta:
+        for model in single_set["list"]:
+            soup = get_soup_of_url(api_url + model["pieces_url"])
+            logging.debug("Get inventory from: {0}".format((api_url + model["pieces_url"])))
+            table = soup.find("tbody")
+            all_rows = table.find_all("tr")
+            pieces = []
+            for row in all_rows:
+                element = row.find("td").getText()
+                design = row.find_all("td", class_="textcenter")[1].getText()
+                img_url = None
+                if row.find("img").has_attr("src"):
+                    img_url = row.find("img")["src"]
+                count = row.find("td", class_="textcenter").getText()
+                colour = row.find("td", class_="hideonlargescreen").getText()
+                pieces.append({"element": element, "design": design, "colour": colour, "count": count, "img_url": img_url})
+            model["pieces"] = pieces
+    return delta
+
+
 def get_data_set(api_url):
     sets_page_html = get_page(api_url + "/sets")
     if sets_page_html is not None:
@@ -316,7 +337,8 @@ def get_data_set(api_url):
         sets_by_theme = get_list_of_all_themes(api_url, endpoints_dict["theme"])
         delta = calculate_delta(config_file['data']['sets_by_theme_file'], sets_by_theme)
         updated_delta = add_instructions(delta, api_url)
-        upserted_data = upsert_sets_by_theme(config_file['data']['sets_by_theme_file'], updated_delta)
+        delta_with_inventory = get_list_of_inventory(api_url, updated_delta)
+        upserted_data = upsert_sets_by_theme(config_file['data']['sets_by_theme_file'], delta_with_inventory)
         save_to_file(config_file['data']['sets_by_theme_file'], upserted_data)
 
 
