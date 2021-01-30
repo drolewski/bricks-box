@@ -295,8 +295,8 @@ def update_instructions_in_delta(delta, instructions_dict):
         for theme in delta:
             model = list(filter(lambda i: str(i["model_id"])[:str(i["model_id"]).index("-") if "-" in str(i["model_id"]) else len(i["model_id"])] == key, theme["list"]))
             if model:
-                checked_instructions = get_checked_instructions(value)
-                model[0]["instructions"] = checked_instructions
+                # checked_instructions = get_checked_instructions(value)
+                model[0]["instructions"] = value
     return delta
 
 
