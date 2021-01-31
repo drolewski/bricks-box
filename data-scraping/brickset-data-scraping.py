@@ -141,17 +141,20 @@ def get_number_of_pages(soup):
 
 def get_list_of_all_themes(api_url, endpoints_list):
     list_of_all_themes = []
-    for url in endpoints_list:
+    if config_file['technic']:
         new_theme = {}
-        logging.debug('Get data from: {0}{1}'.format(api_url, url))
-        theme_list = get_list_of_single_theme_list('{0}{1}'.format(api_url, url))
-        if config_file['technic']:
-            if len(theme_list) > 0 and theme_list[0]["theme"] == "Technic":
-                new_theme["name"] = theme_list[0]["theme"]
-                new_theme["list"] = theme_list
-                logging.debug("Save Theme: {0}".format(new_theme["name"]))
-                list_of_all_themes.append(new_theme)
-        else:
+        technic_url = list(filter(lambda i: re.match(".*[Tt]echnic$", i), endpoints_list))
+        theme_list = get_list_of_single_theme_list('{0}{1}'.format(api_url, technic_url[0]))
+        if len(theme_list) > 0:
+            new_theme["name"] = theme_list[0]["theme"]
+            new_theme["list"] = theme_list
+            logging.debug("Save Theme: {0}".format(new_theme["name"]))
+            list_of_all_themes.append(new_theme)
+    else:
+        for url in endpoints_list:
+            new_theme = {}
+            logging.debug('Get data from: {0}{1}'.format(api_url, url))
+            theme_list = get_list_of_single_theme_list('{0}{1}'.format(api_url, endpoints_list[134]))
             if len(theme_list) > 0:
                 new_theme["name"] = theme_list[0]["theme"]
                 new_theme["list"] = theme_list
