@@ -6,6 +6,7 @@
 ssh $1 "pip3 install PyYAML"
 ssh $1 "pip3 install requests"
 ssh $1 "pip3 install beautifulsoup4"
+ssh $1 "pip3 install pymongo"
 
 ssh $1 "sudo mkdir -p /opt/python"
 ssh $1 "sudo mkdir -p /etc/lego"

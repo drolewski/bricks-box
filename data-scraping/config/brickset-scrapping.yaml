@@ -12,3 +12,7 @@ data:
 api:
   url: 'FILL'
 technic: 'FILL'
+mongodb:
+  url: 'FILL'
+  db_name: 'FILL'
+  collection_name: 'FILL'

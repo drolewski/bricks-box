@@ -10,6 +10,7 @@ from datetime import date, datetime
 import requests
 import yaml
 from bs4 import BeautifulSoup
+from pymongo import MongoClient
 
 
 def config(config_src):
@@ -387,11 +388,29 @@ def rename_logging_file():
     os.rename(config_file['logging']['file'], new_filename)
 
 
+def save_data_in_mongo():
+    client = MongoClient(config_file['mongodb']['url'])
+    db = client[config_file['mongodb']['db_name']]
+    collection = db[config_file['mongodb']['collection_name']]
+    with open(config_file['data']['sets_by_theme_file']) as f:
+        data = json.load(f)
+
+    themes = data
+    if config_file['technic']:
+        themes = list(filter(lambda i: i['name'] == 'Technic', data))
+
+    for theme in themes:
+        for model in theme['list']:
+            if collection.find_one({"model_id": model["model_id"]}) is None:
+                collection.insert_one(model)
+
+
 def main():
     config_file_d = config(sys.argv[1])
     logging.debug("Script started!")
     api_url = config_file['api']['url']
     get_data_set(api_url)
+    save_data_in_mongo()
     logging.debug("Script stopped!")
     cleanup_prepared_files()
     config_file_d.close()

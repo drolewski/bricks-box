@@ -19,3 +19,6 @@ data.delta_file | - | true | Absolute path to single run delta file
 data.instructions_file | - | true | Absolute path to instructions file
 api.url | - | true | Url to api
 technic | - | true | Download only LEGO Technic data
+mongodb.url | - | true | MongoDB connection URL
+mongodb.db_name | - | true | MongoDb Database name
+mongodb.collection_name | - | true | MongoDb collection name
