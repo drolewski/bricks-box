@@ -391,10 +391,7 @@ def rename_logging_file():
 def save_data_in_mongo():
     client = MongoClient(config_file['mongodb']['url'])
     db = client[config_file['mongodb']['db_name']]
-
-    collections = db.list_collection_names()
-    if config_file['mongodb']['collection_name'] not in collections:
-        collection = db[config_file['mongodb']['collection_name']]
+    collection = db[config_file['mongodb']['collection_name']]
 
     with open(config_file['data']['sets_by_theme_file']) as f:
         data = json.load(f)
