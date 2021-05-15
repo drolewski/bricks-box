@@ -13,7 +13,7 @@ class BrickboxApplicationTest extends Specification {
         when:
         def result = two * 2
 
-        expect:
+        then:
         result == 4
     }
 }
