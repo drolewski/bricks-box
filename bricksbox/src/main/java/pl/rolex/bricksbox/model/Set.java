@@ -9,9 +9,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.List;
 
 @Data
+@Document
 @AllArgsConstructor
 @NoArgsConstructor
-@Document
 public class Set {
     @Id
     private String id;
