@@ -92,7 +92,6 @@ ENV/
 ### VirtualEnv template
 # Virtualenv
 # http://iamzed.com/2009/05/07/a-primer-on-virtualenv/
-.Python
 [Bb]in
 [Ii]nclude
 [Ll]ib
@@ -153,3 +152,5 @@ fabric.properties
 # Additional config fles
 /data-scraping/config/brickset-raspberry.yaml
 /data-scraping/config/brickset-local.yaml
+
+**/**/application.properties
