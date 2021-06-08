@@ -2,7 +2,7 @@ package pl.rolex.bricksbox.service.user;
 
 import pl.rolex.bricksbox.model.User;
 
-public class EmptyUserSingleton {
+public final class EmptyUserSingleton {
     private static User user;
 
     public static User getInstance() {

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pl.rolex.bricksbox.controller.response.ErrorResponse;
 import pl.rolex.bricksbox.security.model.AuthRequest;
 import pl.rolex.bricksbox.security.model.AuthResponse;
-import pl.rolex.bricksbox.service.user.UserRegistrationService;
+import pl.rolex.bricksbox.service.user.UserAuthenticationService;
 import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
@@ -22,11 +22,11 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class UserRegistrationController {
 
-    private final UserRegistrationService userRegistrationService;
+    private final UserAuthenticationService userAuthenticationService;
 
     @PostMapping("")
     public Mono<ResponseEntity<?>> register(@RequestBody @Valid AuthRequest authRequest) {
-        return this.userRegistrationService.register(authRequest).map(this::registrationResponse);
+        return this.userAuthenticationService.register(authRequest).map(this::registrationResponse);
     }
 
     private ResponseEntity<?> registrationResponse(AuthResponse response) {

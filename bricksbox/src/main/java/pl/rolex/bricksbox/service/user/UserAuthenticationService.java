@@ -1,6 +1,5 @@
 package pl.rolex.bricksbox.service.user;
 
-import groovy.util.logging.Log4j2;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,10 +11,9 @@ import pl.rolex.bricksbox.security.model.AuthRequest;
 import pl.rolex.bricksbox.security.model.AuthResponse;
 import reactor.core.publisher.Mono;
 
-@Log4j2
 @Service
 @RequiredArgsConstructor
-public class UserRegistrationService {
+public class UserAuthenticationService {
 
     private final Pbkdf2PasswordEncoderAdapter encoderAdapter;
     private final JSONWebToken JSONWebToken;
@@ -25,10 +23,10 @@ public class UserRegistrationService {
     public Mono<AuthResponse> register(final AuthRequest authRequest) {
         return this.userRepository.findByUserName(authRequest.getUserName())
                 .defaultIfEmpty(EmptyUserSingleton.getInstance())
-                .flatMap(u -> getAuthResponseMono(authRequest, u));
+                .flatMap(u -> getRegistrationResponse(authRequest, u));
     }
 
-    private Mono<AuthResponse> getAuthResponseMono(AuthRequest authRequest, User u) {
+    private Mono<AuthResponse> getRegistrationResponse(AuthRequest authRequest, User u) {
         if (!authRequest.getUserName().equals(u.getUsername())) {
             return saveUser(authRequest);
         }
@@ -41,6 +39,28 @@ public class UserRegistrationService {
                 this.encoderAdapter.encode(authRequest.getPassword())
         );
         return this.userRepository.save(user).map(__ -> new AuthResponse(JSONWebToken.generateToken(user)));
+    }
+
+    @Transactional
+    public Mono<AuthResponse> login(final AuthRequest authRequest) {
+        return this.userRepository.findByUserName(authRequest.getUserName())
+                .defaultIfEmpty(EmptyUserSingleton.getInstance())
+                .flatMap(u -> getLoginResponse(authRequest, u));
+    }
+
+    private Mono<AuthResponse> getLoginResponse(AuthRequest authRequest, User user) {
+        if (authRequest.getUserName().equals(user.getUsername()) && encoderAdapter.matches(authRequest.getPassword(), user.getPassword())) {
+            return loginUser(authRequest);
+        }
+        return notAuthenticated();
+    }
+
+    private Mono<AuthResponse> loginUser(AuthRequest authRequest) {
+        final User user = new User(
+                authRequest.getUserName(),
+                this.encoderAdapter.encode(authRequest.getPassword())
+        );
+        return Mono.just(new AuthResponse(JSONWebToken.generateToken(user)));
     }
 
     private Mono<AuthResponse> notAuthenticated() {
