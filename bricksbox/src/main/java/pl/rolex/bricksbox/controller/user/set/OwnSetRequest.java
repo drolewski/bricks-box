@@ -1,4 +1,4 @@
-package pl.rolex.bricksbox.controller.user;
+package pl.rolex.bricksbox.controller.user.set;
 
 import lombok.Data;
 
