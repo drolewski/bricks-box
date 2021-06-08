@@ -11,9 +11,9 @@ import pl.rolex.bricksbox.service.set.OwnSetService;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("api/user/set")
+@RequestMapping("api/user/sets")
 @RequiredArgsConstructor
-public class UserSetController {
+public class UserSetsController {
 
     private final OwnSetService ownSetService;
 
