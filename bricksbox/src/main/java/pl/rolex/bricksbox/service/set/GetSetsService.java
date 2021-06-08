@@ -1,4 +1,4 @@
-package pl.rolex.bricksbox.service;
+package pl.rolex.bricksbox.service.set;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
