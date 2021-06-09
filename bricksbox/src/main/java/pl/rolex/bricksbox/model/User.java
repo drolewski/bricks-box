@@ -28,7 +28,7 @@ public class User implements UserDetails {
     @Indexed(unique = true)
     private String userName;
     private String password;
-    private List<String> sets;
+    private List<Set> sets;
     private List<Piece> additionalPieces;
     private Map<String, Boolean> buildPlans;
 

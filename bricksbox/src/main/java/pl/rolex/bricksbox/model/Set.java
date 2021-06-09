@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.List;
 
@@ -15,7 +16,8 @@ import java.util.List;
 public class Set {
     @Id
     private String id;
-    private String model_id;
+    @Field("model_id")
+    private String modelId;
     private String name;
     private String theme;
     private String img_link;

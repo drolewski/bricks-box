@@ -11,6 +11,7 @@ import reactor.core.publisher.Flux;
 public class GetSetsService {
     private final SetRepository setRepository;
 
+    // TODO missing pieces to build set
     public Flux<Set> getSets() {
         return this.setRepository.findAll();
     }

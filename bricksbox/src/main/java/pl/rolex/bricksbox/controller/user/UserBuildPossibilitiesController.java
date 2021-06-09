@@ -1,0 +1,42 @@
+package pl.rolex.bricksbox.controller.user;
+
+import io.jsonwebtoken.lang.Collections;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import pl.rolex.bricksbox.controller.user.requests.UserTokenRequest;
+import pl.rolex.bricksbox.model.Set;
+import pl.rolex.bricksbox.service.set.BuildPossibilitiesService;
+import reactor.core.publisher.Mono;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("api/user/build-possibilities")
+@RequiredArgsConstructor
+public class UserBuildPossibilitiesController {
+
+    private final BuildPossibilitiesService buildPossibilitiesService;
+
+    @GetMapping("")
+    public Mono<ResponseEntity<?>> get(@RequestBody UserTokenRequest token) {
+        return buildPossibilitiesService.get(token.getToken()).flatMap(sets -> {
+            if (!Collections.isEmpty(sets)) {
+                return userBuildPossibilities(sets);
+            }
+            return emptyBuildList();
+        });
+    }
+
+    private Mono<ResponseEntity<?>> userBuildPossibilities(List<Set> sets) {
+        return Mono.just(ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(sets));
+    }
+
+    private Mono<ResponseEntity<?>> emptyBuildList() {
+        return Mono.just(ResponseEntity.noContent().build());
+    }
+}

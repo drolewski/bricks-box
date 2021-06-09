@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 import pl.rolex.bricksbox.controller.response.ErrorResponse;
 import pl.rolex.bricksbox.controller.user.set.OwnSetRequest;
 import pl.rolex.bricksbox.controller.user.set.OwnSetResponse;
+import pl.rolex.bricksbox.model.Set;
 import pl.rolex.bricksbox.model.User;
+import pl.rolex.bricksbox.repository.SetRepository;
 import pl.rolex.bricksbox.repository.UserRepository;
 import pl.rolex.bricksbox.security.JSONWebToken;
 import pl.rolex.bricksbox.service.user.EmptyUserSingleton;
@@ -19,15 +21,18 @@ import reactor.core.publisher.Mono;
 public class OwnSetService {
 
     private final UserRepository userRepository;
+    private final SetRepository setRepository;
     private final JSONWebToken jsonWebToken;
 
     public Mono<ResponseEntity<?>> ownSet(final OwnSetRequest ownSetRequest) {
         try {
             if (this.jsonWebToken.isTokenValid(ownSetRequest.getToken())) {
                 var userName = jsonWebToken.getUsernameFromToken(ownSetRequest.getToken());
-                return this.userRepository.findByUserName(userName)
-                        .defaultIfEmpty(EmptyUserSingleton.getInstance())
-                        .flatMap(u -> ownSet(u, ownSetRequest.getId()));
+                return this.setRepository.findByModelId(ownSetRequest.getId()).flatMap(s ->
+                        this.userRepository.findByUserName(userName)
+                                .defaultIfEmpty(EmptyUserSingleton.getInstance())
+                                .flatMap(u -> ownSet(u, s))
+                );
             }
             return unauthorized();
         } catch (Exception ex) {
@@ -35,15 +40,15 @@ public class OwnSetService {
         }
     }
 
-    private Mono<ResponseEntity<?>> ownSet(User user, final String id) {
-        if (user.getSets().contains(id)) {
-            return Mono.just(removeUserSet(user, id));
+    private Mono<ResponseEntity<?>> ownSet(User user, final Set set) {
+        if (user.getSets().contains(set)) {
+            return Mono.just(removeUserSet(user, set));
         }
-        return Mono.just(addUserSet(user, id));
+        return Mono.just(addUserSet(user, set));
     }
 
-    private ResponseEntity<OwnSetResponse> removeUserSet(User user, String id) {
-        user.getSets().remove(id);
+    private ResponseEntity<OwnSetResponse> removeUserSet(User user, Set set) {
+        user.getSets().remove(set);
         this.userRepository.save(user).subscribe();
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -52,8 +57,8 @@ public class OwnSetService {
                         .build());
     }
 
-    private ResponseEntity<OwnSetResponse> addUserSet(User user, String id) {
-        user.getSets().add(id);
+    private ResponseEntity<OwnSetResponse> addUserSet(User user, Set set) {
+        user.getSets().add(set);
         this.userRepository.save(user).subscribe();
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
