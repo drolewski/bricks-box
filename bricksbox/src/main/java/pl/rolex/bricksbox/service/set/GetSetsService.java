@@ -7,13 +7,13 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import pl.rolex.bricksbox.controller.set.UserSetResponse;
-import pl.rolex.bricksbox.controller.user.requests.UserTokenRequest;
+import pl.rolex.bricksbox.controller.user.userwithtoken.UserTokenRequest;
 import pl.rolex.bricksbox.model.Piece;
 import pl.rolex.bricksbox.model.Set;
 import pl.rolex.bricksbox.repository.SetRepository;
 import pl.rolex.bricksbox.repository.UserRepository;
 import pl.rolex.bricksbox.security.JSONWebToken;
-import pl.rolex.bricksbox.service.piece.GetUserPieces;
+import pl.rolex.bricksbox.service.piece.GetUserPiecesService;
 import pl.rolex.bricksbox.service.user.EmptyUserSingleton;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -29,7 +29,7 @@ public class GetSetsService {
     private final SetRepository setRepository;
     private final UserRepository userRepository;
     private final JSONWebToken jsonWebToken;
-    private final GetUserPieces getUserPieces;
+    private final GetUserPiecesService getUserPiecesService;
 
     public Flux<Set> getAllSets() {
         return this.setRepository.findAll();
@@ -41,7 +41,7 @@ public class GetSetsService {
                 var userName = jsonWebToken.getUsernameFromToken(userTokenRequest.getToken());
                 return this.userRepository.findByUserName(userName)
                         .defaultIfEmpty(EmptyUserSingleton.getInstance())
-                        .flatMap(this.getUserPieces::getUserPieces)
+                        .flatMap(this.getUserPiecesService::getUserPieces)
                         .flatMap(userPieces -> getModelMissingPieces(userPieces, modelId))
                         .flatMap(this::getResponseEntity);
             }

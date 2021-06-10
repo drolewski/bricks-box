@@ -8,7 +8,7 @@ import pl.rolex.bricksbox.model.Set;
 import pl.rolex.bricksbox.repository.SetRepository;
 import pl.rolex.bricksbox.repository.UserRepository;
 import pl.rolex.bricksbox.security.JSONWebToken;
-import pl.rolex.bricksbox.service.piece.GetUserPieces;
+import pl.rolex.bricksbox.service.piece.GetUserPiecesService;
 import pl.rolex.bricksbox.service.user.EmptyUserSingleton;
 import reactor.core.publisher.Mono;
 
@@ -25,7 +25,7 @@ public class BuildPossibilitiesService {
     private final UserRepository userRepository;
     private final SetRepository setRepository;
     private final JSONWebToken jsonWebToken;
-    private final GetUserPieces getUserPieces;
+    private final GetUserPiecesService getUserPiecesService;
 
     public Mono<List<Set>> get(final String token) {
         try {
@@ -33,7 +33,7 @@ public class BuildPossibilitiesService {
                 final var username = jsonWebToken.getUsernameFromToken(token);
                 return this.userRepository.findByUserName(username)
                         .defaultIfEmpty(EmptyUserSingleton.getInstance())
-                        .flatMap(this.getUserPieces::getUserPieces)
+                        .flatMap(this.getUserPiecesService::getUserPieces)
                         .flatMap(this::getUserBuildPossibilities);
             }
             return Mono.just(Collections.emptyList());

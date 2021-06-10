@@ -1,4 +1,4 @@
-package pl.rolex.bricksbox.controller.user.requests;
+package pl.rolex.bricksbox.controller.user.userwithtoken;
 
 import lombok.Data;
 

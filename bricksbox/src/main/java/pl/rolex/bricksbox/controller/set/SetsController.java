@@ -3,7 +3,7 @@ package pl.rolex.bricksbox.controller.set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.rolex.bricksbox.controller.user.requests.UserTokenRequest;
+import pl.rolex.bricksbox.controller.user.userwithtoken.UserTokenRequest;
 import pl.rolex.bricksbox.model.Set;
 import pl.rolex.bricksbox.service.set.GetSetsService;
 import reactor.core.publisher.Flux;

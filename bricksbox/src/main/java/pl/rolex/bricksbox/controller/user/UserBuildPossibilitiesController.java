@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pl.rolex.bricksbox.controller.user.requests.UserTokenRequest;
+import pl.rolex.bricksbox.controller.user.userwithtoken.UserTokenRequest;
 import pl.rolex.bricksbox.model.Set;
 import pl.rolex.bricksbox.service.set.BuildPossibilitiesService;
 import reactor.core.publisher.Mono;
