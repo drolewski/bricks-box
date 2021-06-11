@@ -2,10 +2,12 @@ package pl.rolex.bricksbox.service.additionalpieces;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.rolex.bricksbox.controller.user.additionalpieces.UpdateAdditionalPieces;
+import pl.rolex.bricksbox.controller.user.userwithtoken.UserTokenRequest;
 import pl.rolex.bricksbox.model.Piece;
 import pl.rolex.bricksbox.model.User;
 import pl.rolex.bricksbox.repository.UserRepository;
@@ -61,5 +63,22 @@ public class AdditionalPiecesService {
 
     private Mono<ResponseEntity<?>> unauthorized() {
         return Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
+    }
+
+    public Mono<ResponseEntity<?>> getAdditionalPieces(UserTokenRequest tokenRequest) {
+        try {
+            if (jsonWebToken.isTokenValid(tokenRequest.getToken())) {
+                var userName = jsonWebToken.getUsernameFromToken(tokenRequest.getToken());
+                return this.userRepository.findByUserName(userName)
+                        .flatMap(this::getUserAdditionalPieces);
+            }
+            return unauthorized();
+        } catch (Exception ex) {
+            return unauthorized();
+        }
+    }
+
+    private Mono<ResponseEntity<?>> getUserAdditionalPieces(User user) {
+        return Mono.just(ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(user.getAdditionalPieces()));
     }
 }

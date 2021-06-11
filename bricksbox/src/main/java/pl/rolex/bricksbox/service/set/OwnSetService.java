@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import pl.rolex.bricksbox.controller.response.ErrorResponse;
 import pl.rolex.bricksbox.controller.user.set.OwnSetRequest;
 import pl.rolex.bricksbox.controller.user.set.OwnSetResponse;
+import pl.rolex.bricksbox.controller.user.userwithtoken.UserTokenRequest;
 import pl.rolex.bricksbox.model.Set;
 import pl.rolex.bricksbox.model.User;
 import pl.rolex.bricksbox.repository.SetRepository;
@@ -77,5 +78,22 @@ public class OwnSetService {
                                 .build()
                         )
         );
+    }
+
+    public Mono<ResponseEntity<?>> getSets(UserTokenRequest tokenRequest) {
+        try {
+            if (this.jsonWebToken.isTokenValid(tokenRequest.getToken())) {
+                var userName = jsonWebToken.getUsernameFromToken(tokenRequest.getToken());
+                return this.userRepository.findByUserName(userName)
+                        .flatMap(this::getSets);
+            }
+            return unauthorized();
+        } catch (Exception ex) {
+            return unauthorized();
+        }
+    }
+
+    private Mono<ResponseEntity<?>> getSets(User user) {
+        return Mono.just(ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(user.getSets()));
     }
 }

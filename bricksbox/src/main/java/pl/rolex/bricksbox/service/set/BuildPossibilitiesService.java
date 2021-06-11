@@ -3,6 +3,7 @@ package pl.rolex.bricksbox.service.set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+import pl.rolex.bricksbox.model.DesignPiece;
 import pl.rolex.bricksbox.model.Piece;
 import pl.rolex.bricksbox.model.Set;
 import pl.rolex.bricksbox.repository.SetRepository;
@@ -14,7 +15,6 @@ import reactor.core.publisher.Mono;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Log4j2
@@ -42,17 +42,17 @@ public class BuildPossibilitiesService {
         }
     }
 
-    private Mono<List<Set>> getUserBuildPossibilities(Map<String, Integer> userPieces) {
+    private Mono<List<Set>> getUserBuildPossibilities(List<DesignPiece> userPieces) {
         return this.setRepository.findAll().buffer().flatMap(sets -> getBuildPossibilitiesWithPieces(sets, userPieces)).single();
     }
 
-    private Mono<List<Set>> getBuildPossibilitiesWithPieces(List<Set> sets, Map<String, Integer> userPieces) {
+    private Mono<List<Set>> getBuildPossibilitiesWithPieces(List<Set> sets, List<DesignPiece> userPieces) {
         return Mono.just(sets.stream()
                 .filter(set -> hasUserPiece(userPieces, set))
                 .collect(Collectors.toList()));
     }
 
-    private boolean hasUserPiece(Map<String, Integer> userPieces, Set set) {
+    private boolean hasUserPiece(List<DesignPiece> userPieces, Set set) {
         for (Piece pieceFromSet : set.getPieces()) {
             if (!isPieceInUserCollection(userPieces, pieceFromSet)) {
                 return false;
@@ -61,17 +61,17 @@ public class BuildPossibilitiesService {
         return true;
     }
 
-    private boolean isPieceInUserCollection(Map<String, Integer> userPieces, Piece setPiece) {
-        for (String userPieceId : userPieces.keySet()) {
-            if (hasUserEnoughPieces(setPiece, userPieceId, userPieces.get(userPieceId))) {
+    private boolean isPieceInUserCollection(List<DesignPiece> userPieces, Piece setPiece) {
+        for (DesignPiece userPiece : userPieces) {
+            if (hasUserEnoughPieces(setPiece, userPiece, userPiece.getCount())) {
                 return true;
             }
         }
         return false;
     }
 
-    private boolean hasUserEnoughPieces(Piece setPiece, String userPieceId, Integer userPieceCount) {
-        return userPieceId.equals(setPiece.getDesign()) && userPieceCount >= setPiece.getCount();
+    private boolean hasUserEnoughPieces(Piece setPiece, DesignPiece userPiece, Integer userPieceCount) {
+        return userPiece.getDesign().equals(setPiece.getDesign()) && userPieceCount >= setPiece.getCount();
     }
 
 }

@@ -2,10 +2,8 @@ package pl.rolex.bricksbox.controller.user.additionalpieces;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import pl.rolex.bricksbox.controller.user.userwithtoken.UserTokenRequest;
 import pl.rolex.bricksbox.service.additionalpieces.AdditionalPiecesService;
 import reactor.core.publisher.Mono;
 
@@ -19,5 +17,10 @@ public class AdditionalPiecesController {
     @PostMapping("update")
     public Mono<ResponseEntity<?>> update(@RequestBody UpdateAdditionalPieces updateAdditionalPieces) {
         return this.additionalPiecesService.update(updateAdditionalPieces);
+    }
+
+    @GetMapping("")
+    public Mono<ResponseEntity<?>> getAdditionalPieces(@RequestBody UserTokenRequest tokenRequest) {
+        return additionalPiecesService.getAdditionalPieces(tokenRequest);
     }
 }

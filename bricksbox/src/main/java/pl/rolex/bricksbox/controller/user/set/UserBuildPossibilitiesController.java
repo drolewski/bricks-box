@@ -1,4 +1,4 @@
-package pl.rolex.bricksbox.controller.user;
+package pl.rolex.bricksbox.controller.user.set;
 
 import io.jsonwebtoken.lang.Collections;
 import lombok.RequiredArgsConstructor;

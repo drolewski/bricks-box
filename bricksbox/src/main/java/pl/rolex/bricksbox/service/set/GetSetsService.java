@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import pl.rolex.bricksbox.controller.set.UserSetResponse;
 import pl.rolex.bricksbox.controller.user.userwithtoken.UserTokenRequest;
+import pl.rolex.bricksbox.model.DesignPiece;
 import pl.rolex.bricksbox.model.Piece;
 import pl.rolex.bricksbox.model.Set;
 import pl.rolex.bricksbox.repository.SetRepository;
@@ -18,7 +19,8 @@ import pl.rolex.bricksbox.service.user.EmptyUserSingleton;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.Map;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Log4j2
@@ -51,11 +53,11 @@ public class GetSetsService {
         }
     }
 
-    private Mono<UserSetResponse> getModelMissingPieces(Map<String, Integer> userPieces, String modelId) {
+    private Mono<UserSetResponse> getModelMissingPieces(List<DesignPiece> userPieces, String modelId) {
         return this.setRepository.findByModelId(modelId).flatMap(set -> getUserSetResponse(userPieces, set));
     }
 
-    private Mono<UserSetResponse> getUserSetResponse(Map<String, Integer> userPieces, Set set) {
+    private Mono<UserSetResponse> getUserSetResponse(List<DesignPiece> userPieces, Set set) {
         return Mono.just(UserSetResponse.builder()
                 .modelId(set.getModelId())
                 .name(set.getName())
@@ -68,21 +70,31 @@ public class GetSetsService {
                 .piecesUrl(set.getPieces_url())
                 .missingPieces(set.getPieces().stream()
                         .filter(p -> !hasEnoughPieces(userPieces, p))
-                        .map(piece -> subtractPieces(piece, userPieces.get(piece.getDesign()) == null ? 0 : userPieces.get(piece.getDesign())))
+                        .map(piece -> subtractPieces(piece, userPieces))
                         .collect(Collectors.toList()))
                 .build());
     }
 
-    private boolean hasEnoughPieces(Map<String, Integer> userPieces, Piece p) {
-        return userPieces.containsKey(p.getDesign()) && userPieces.get(p.getDesign()) >= p.getCount();
+    private boolean hasEnoughPieces(List<DesignPiece> userPieces, Piece p) {
+        return userPieces.stream().anyMatch(piece -> piece.getDesign().equals(p.getDesign()) && piece.getCount() >= p.getCount());
     }
 
-    private Piece subtractPieces(Piece piece, Integer sub) {
+    private Piece subtractPieces(Piece piece, List<DesignPiece> userPieces) {
+        final Optional<DesignPiece> foundPiece = userPieces.stream().filter(p -> p.getDesign().equals(piece.getDesign())).findAny();
+        if (foundPiece.isPresent()) {
+            return Piece.builder()
+                    .element(piece.getElement())
+                    .design(piece.getDesign())
+                    .colour(piece.getColour())
+                    .count(piece.getCount() - foundPiece.get().getCount())
+                    .img_url(piece.getImg_url())
+                    .build();
+        }
         return Piece.builder()
                 .element(piece.getElement())
                 .design(piece.getDesign())
                 .colour(piece.getColour())
-                .count(piece.getCount() - sub)
+                .count(piece.getCount())
                 .img_url(piece.getImg_url())
                 .build();
     }

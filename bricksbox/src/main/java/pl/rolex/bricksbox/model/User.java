@@ -30,7 +30,7 @@ public class User implements UserDetails {
     private String password;
     private List<Set> sets;
     private List<Piece> additionalPieces;
-    private Map<String, Boolean> buildPlans;
+    private List<BuildingSet> buildPlans;
 
     private boolean enabled;
     private List<Role> roles;
@@ -40,7 +40,7 @@ public class User implements UserDetails {
         this.password = password;
         this.sets = new ArrayList<>();
         this.additionalPieces = new ArrayList<>();
-        this.buildPlans = new HashMap<>();
+        this.buildPlans = new ArrayList<>();
         this.enabled = true;
         this.roles = Collections.singletonList(ADMIN);
     }

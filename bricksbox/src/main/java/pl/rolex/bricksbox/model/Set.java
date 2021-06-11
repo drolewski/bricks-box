@@ -7,6 +7,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -23,7 +24,7 @@ public class Set {
     private String img_link;
     private String year;
     private List<Piece> pieces;
-    private List<String> instructions;
+    private List<String> instructions = new ArrayList<>();
     private int pieces_num;
     private String pieces_url;
 
