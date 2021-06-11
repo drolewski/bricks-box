@@ -27,13 +27,13 @@ public class BuildPossibilitiesService {
     private final JSONWebToken jsonWebToken;
     private final GetUserPiecesService getUserPiecesService;
 
-    public Mono<List<Set>> get(final String token) {
+    public Mono<List<Set>> get(final String token, final boolean withShoppingList) {
         try {
             if (jsonWebToken.isTokenValid(token)) {
                 final var username = jsonWebToken.getUsernameFromToken(token);
                 return this.userRepository.findByUserName(username)
                         .defaultIfEmpty(EmptyUserSingleton.getInstance())
-                        .flatMap(this.getUserPiecesService::getUserPieces)
+                        .flatMap(user -> this.getUserPiecesService.getUserPieces(user, withShoppingList))
                         .flatMap(this::getUserBuildPossibilities);
             }
             return Mono.just(Collections.emptyList());

@@ -20,9 +20,9 @@ public class SetsController {
         return this.getSetsService.getAllSets();
     }
 
-    @GetMapping("user/set/{modelId}")
-    public Mono<ResponseEntity<?>> getUserSet(@PathVariable String modelId, @RequestBody UserTokenRequest userTokenRequest) {
-        return this.getSetsService.getUserSet(userTokenRequest, modelId);
+    @GetMapping("user/set/{modelId}/{withShoppingList}")
+    public Mono<ResponseEntity<?>> getUserSet(@PathVariable String modelId, @PathVariable boolean withShoppingList,  @RequestBody UserTokenRequest userTokenRequest) {
+        return this.getSetsService.getUserSet(userTokenRequest, modelId, withShoppingList);
     }
 
 }

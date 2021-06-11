@@ -29,13 +29,13 @@ public class GetUserPiecesService {
     private final UserRepository userRepository;
     private final JSONWebToken jsonWebToken;
 
-    public Mono<ResponseEntity<?>> getPieces(UserTokenRequest request) {
+    public Mono<ResponseEntity<?>> getPieces(UserTokenRequest request, boolean withShoppingList) {
         try {
             if (jsonWebToken.isTokenValid(request.getToken())) {
                 final var username = jsonWebToken.getUsernameFromToken(request.getToken());
                 return this.userRepository.findByUserName(username)
                         .defaultIfEmpty(EmptyUserSingleton.getInstance())
-                        .flatMap(this::getUserPieces)
+                        .flatMap(user -> getUserPieces(user, withShoppingList))
                         .flatMap(this::getResponseEntity);
             }
             return unauthorized();
@@ -44,16 +44,23 @@ public class GetUserPiecesService {
         }
     }
 
-    public Mono<List<DesignPiece>> getUserPieces(User user) {
-        Map<Piece, Integer> piecesWithCounter = getPiecesMap(user);
+    public Mono<List<DesignPiece>> getUserPieces(User user, boolean withShoppingList) {
+        Map<Piece, Integer> piecesWithCounter = getPiecesMap(user, withShoppingList);
         List<DesignPiece> designPieces = new ArrayList<>();
         piecesWithCounter.forEach((key, value) -> designPieces.add(new DesignPiece(key.getDesign(), value, key.getImg_url())));
         log.info("{}", designPieces);
         return Mono.just(designPieces);
     }
 
-    private Map<Piece, Integer> getPiecesMap(User user) {
+    private Map<Piece, Integer> getPiecesMap(User user, boolean withShoppingList) {
         Map<Piece, Integer> piecesWithCounter = new HashMap<>();
+        if (withShoppingList) {
+            user.getShoppingList().stream().collect(Collectors.groupingBy(Piece::getDesign, Collectors.summingInt(Piece::getCount)))
+                    .forEach((key, value) -> user.getAdditionalPieces().stream()
+                            .filter(piece -> piece.getDesign().equals(key))
+                            .findFirst().ifPresent(piece -> piecesWithCounter.put(piece, value))
+                    );
+        }
         user.getAdditionalPieces().stream().collect(Collectors.groupingBy(Piece::getDesign, Collectors.summingInt(Piece::getCount)))
                 .forEach((key, value) -> user.getAdditionalPieces().stream()
                         .filter(piece -> piece.getDesign().equals(key))

@@ -37,13 +37,13 @@ public class GetSetsService {
         return this.setRepository.findAll();
     }
 
-    public Mono<ResponseEntity<?>> getUserSet(UserTokenRequest userTokenRequest, String modelId) {
+    public Mono<ResponseEntity<?>> getUserSet(UserTokenRequest userTokenRequest, String modelId, boolean withShoppingList) {
         try {
             if (jsonWebToken.isTokenValid(userTokenRequest.getToken())) {
                 var userName = jsonWebToken.getUsernameFromToken(userTokenRequest.getToken());
                 return this.userRepository.findByUserName(userName)
                         .defaultIfEmpty(EmptyUserSingleton.getInstance())
-                        .flatMap(this.getUserPiecesService::getUserPieces)
+                        .flatMap(user -> this.getUserPiecesService.getUserPieces(user, withShoppingList))
                         .flatMap(userPieces -> getModelMissingPieces(userPieces, modelId))
                         .flatMap(this::getResponseEntity);
             }

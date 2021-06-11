@@ -4,10 +4,7 @@ import io.jsonwebtoken.lang.Collections;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pl.rolex.bricksbox.controller.user.userwithtoken.UserTokenRequest;
 import pl.rolex.bricksbox.model.Set;
 import pl.rolex.bricksbox.service.set.BuildPossibilitiesService;
@@ -22,9 +19,9 @@ public class UserBuildPossibilitiesController {
 
     private final BuildPossibilitiesService buildPossibilitiesService;
 
-    @GetMapping("")
-    public Mono<ResponseEntity<?>> get(@RequestBody UserTokenRequest token) {
-        return buildPossibilitiesService.get(token.getToken()).flatMap(sets -> {
+    @GetMapping("/{withShoppingList}")
+    public Mono<ResponseEntity<?>> get(@RequestBody UserTokenRequest token, @PathVariable boolean withShoppingList) {
+        return buildPossibilitiesService.get(token.getToken(), withShoppingList).flatMap(sets -> {
             if (!Collections.isEmpty(sets)) {
                 return userBuildPossibilities(sets);
             }

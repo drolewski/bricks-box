@@ -31,6 +31,7 @@ public class User implements UserDetails {
     private List<Set> sets;
     private List<Piece> additionalPieces;
     private List<BuildingSet> buildPlans;
+    private List<Piece> shoppingList;
 
     private boolean enabled;
     private List<Role> roles;
@@ -43,6 +44,7 @@ public class User implements UserDetails {
         this.buildPlans = new ArrayList<>();
         this.enabled = true;
         this.roles = Collections.singletonList(ADMIN);
+        this.shoppingList = new ArrayList<>();
     }
 
     @Override
