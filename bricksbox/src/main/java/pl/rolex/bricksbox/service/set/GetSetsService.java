@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import pl.rolex.bricksbox.controller.set.UserSetResponse;
+import pl.rolex.bricksbox.controller.user.set.UserSetResponse;
 import pl.rolex.bricksbox.controller.user.userwithtoken.UserTokenRequest;
 import pl.rolex.bricksbox.model.DesignPiece;
 import pl.rolex.bricksbox.model.Piece;
