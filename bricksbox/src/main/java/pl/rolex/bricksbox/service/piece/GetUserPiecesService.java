@@ -55,8 +55,9 @@ public class GetUserPiecesService {
     private Map<Piece, Integer> getPiecesMap(User user, boolean withShoppingList) {
         Map<Piece, Integer> piecesWithCounter = new HashMap<>();
         if (withShoppingList) {
+            log.info("Shopping list is turned on");
             user.getShoppingList().stream().collect(Collectors.groupingBy(Piece::getDesign, Collectors.summingInt(Piece::getCount)))
-                    .forEach((key, value) -> user.getAdditionalPieces().stream()
+                    .forEach((key, value) -> user.getShoppingList().stream()
                             .filter(piece -> piece.getDesign().equals(key))
                             .findFirst().ifPresent(piece -> piecesWithCounter.put(piece, value))
                     );
