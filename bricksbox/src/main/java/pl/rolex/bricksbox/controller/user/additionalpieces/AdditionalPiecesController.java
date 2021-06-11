@@ -15,12 +15,17 @@ public class AdditionalPiecesController {
     private final AdditionalPiecesService additionalPiecesService;
 
     @PostMapping("update")
-    public Mono<ResponseEntity<?>> update(@RequestBody UpdateAdditionalPieces updateAdditionalPieces) {
-        return this.additionalPiecesService.update(updateAdditionalPieces);
+    public Mono<ResponseEntity<?>> update(@RequestBody UpdatePiece updatePiece) {
+        return this.additionalPiecesService.update(updatePiece);
     }
 
     @GetMapping("")
     public Mono<ResponseEntity<?>> getAdditionalPieces(@RequestBody UserTokenRequest tokenRequest) {
         return additionalPiecesService.getAdditionalPieces(tokenRequest);
+    }
+
+    @DeleteMapping("")
+    public Mono<ResponseEntity<?>> deleteAdditionalPiece(@RequestBody DeletePiece deletePiece) {
+        return this.additionalPiecesService.delete(deletePiece);
     }
 }
