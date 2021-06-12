@@ -27,5 +27,4 @@ public class Set {
     private List<String> instructions = new ArrayList<>();
     private int pieces_num;
     private String pieces_url;
-
 }

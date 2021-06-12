@@ -1,0 +1,14 @@
+:host {
+  width: 70%;
+}
+
+.table {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  margin-top: 40px;
+}
+
+app-sets-filter {
+  width: 100%;
+}
