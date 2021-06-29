@@ -25,7 +25,6 @@ import {MatSort} from '@angular/material/sort';
       <mat-tab-group>
         <mat-tab label="List klocków ({{set.piecesNum}})"><app-pieces-table [pieces]="set.pieces"></app-pieces-table></mat-tab>
         <mat-tab label="Lista brakujących klocków ({{set.missingPieces.length}})"><app-pieces-table [pieces]="set.missingPieces"></app-pieces-table></mat-tab>
-
       </mat-tab-group>
     </div>
   `,

@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {SetModel} from '../../model/set.model';
 import {ActivatedRoute, Router} from '@angular/router';
 
@@ -31,6 +31,6 @@ export class ListComponent {
   }
 
   showSet(modelId: string): void {
-    this.router.navigate([modelId], { relativeTo: this.route });
+    this.router.navigate([modelId], {relativeTo: this.route});
   }
 }
