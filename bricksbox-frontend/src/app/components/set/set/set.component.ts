@@ -4,6 +4,7 @@ import {UserSet} from '../../../model/user-set.model';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
+import {MatCheckboxChange} from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-set',
@@ -22,9 +23,14 @@ import {MatSort} from '@angular/material/sort';
           </div>
         </div>
       </div>
+      <mat-checkbox [checked]="withShoppingList" (change)="onCheckboxChange($event)">Dodaj listę zakupów</mat-checkbox>
       <mat-tab-group>
-        <mat-tab label="List klocków ({{set.piecesNum}})"><app-pieces-table [pieces]="set.pieces"></app-pieces-table></mat-tab>
-        <mat-tab label="Lista brakujących klocków ({{set.missingPieces.length}})"><app-pieces-table [pieces]="set.missingPieces"></app-pieces-table></mat-tab>
+        <mat-tab label="List klocków ({{set.piecesNum}})">
+          <app-pieces-table [pieces]="set.pieces"></app-pieces-table>
+        </mat-tab>
+        <mat-tab label="Lista brakujących klocków ({{set.missingPieces.length}})">
+          <app-pieces-table [pieces]="set.missingPieces"></app-pieces-table>
+        </mat-tab>
       </mat-tab-group>
     </div>
   `,
@@ -35,6 +41,8 @@ export class SetComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
+  withShoppingList: boolean;
+  modelId: string;
   set: UserSet;
 
   constructor(private getSetService: GetSetService,
@@ -46,10 +54,18 @@ export class SetComponent implements OnInit {
     const modelId = this.route.snapshot.paramMap.get('modelId');
     const withShoppingList = this.route.snapshot.paramMap.get('withShoppingList');
     if (modelId && withShoppingList) {
-      this.getSetService.getSet(modelId, Boolean.apply(withShoppingList)).subscribe(s => this.set = s);
+      this.withShoppingList = withShoppingList === "true";
+      console.log(this.withShoppingList);
+      this.modelId = modelId;
+      this.getSetService.getSet(this.modelId, this.withShoppingList).subscribe(s => this.set = s);
       return;
     }
     this.router.navigate(['/sets']);
   }
 
+  onCheckboxChange($event: MatCheckboxChange): void {
+    this.withShoppingList = $event.checked;
+    this.router.navigate(["../sets", this.modelId, this.withShoppingList]);
+    this.getSetService.getSet(this.modelId, this.withShoppingList).subscribe(s => this.set = s);
+  }
 }
