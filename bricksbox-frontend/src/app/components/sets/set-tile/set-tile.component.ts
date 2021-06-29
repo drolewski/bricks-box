@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {SetModel} from '../../model/set.model';
+import {SetModel} from '../../../model/set.model';
 
 @Component({
   selector: 'app-set-tile',

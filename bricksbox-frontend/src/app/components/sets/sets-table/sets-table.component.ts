@@ -1,18 +1,14 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {SetModel} from '../../model/set.model';
+import {SetModel} from '../../../model/set.model';
 import {Subscription} from 'rxjs';
-import {GetSetsService} from '../../service/get-sets.service';
+import {GetSetsService} from '../../../service/get-sets.service';
 
 @Component({
   selector: 'app-sets-table',
   template: `
-    <div class="table">
-      <app-sets-filter [searchValue]="searchValue"
-                       (searchValueChanged)="changeSearchValue($event)"></app-sets-filter>
-      <div *ngFor="let set of getSets()">
-        <app-set-tile [set]="set"></app-set-tile>
-      </div>
-    </div>
+    <app-table [sets]="getSets()"
+               [searchValue]="searchValue"
+               (searchValueChanged)="changeSearchValue($event)"></app-table>
   `,
   styleUrls: ['./sets-table.component.css']
 })
