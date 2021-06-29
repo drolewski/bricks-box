@@ -5,7 +5,7 @@ import {SetComponent} from './components/set/set/set.component';
 
 const routes: Routes = [
   {path: 'sets', component: SetsTableComponent},
-  {path: 'sets/:modelId', component: SetComponent},
+  {path: 'sets/:modelId/:withShoppingList', component: SetComponent},
   {path: '**', redirectTo: 'sets', pathMatch: 'full'}
 ];
 

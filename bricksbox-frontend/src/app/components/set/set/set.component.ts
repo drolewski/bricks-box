@@ -44,8 +44,9 @@ export class SetComponent implements OnInit {
 
   ngOnInit(): void {
     const modelId = this.route.snapshot.paramMap.get('modelId');
-    if (modelId) {
-      this.getSetService.getSet(modelId, false).subscribe(s => this.set = s);
+    const withShoppingList = this.route.snapshot.paramMap.get('withShoppingList');
+    if (modelId && withShoppingList) {
+      this.getSetService.getSet(modelId, Boolean.apply(withShoppingList)).subscribe(s => this.set = s);
       return;
     }
     this.router.navigate(['/sets']);

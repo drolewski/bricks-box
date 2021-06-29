@@ -6,6 +6,7 @@ import {ActivatedRoute, Router} from '@angular/router';
   selector: 'app-table',
   template: `
     <div class="table">
+      <mat-checkbox [checked]="withShoppingList" (change)="withShoppingList = !withShoppingList">Dodaj listę zakupów</mat-checkbox>
       <app-sets-filter [searchValue]="searchValue"
                        (searchValueChanged)="changeSearchValue($event)"></app-sets-filter>
       <div *ngFor="let set of sets">
@@ -22,6 +23,8 @@ export class ListComponent {
 
   @Output() searchValueChanged: EventEmitter<string> = new EventEmitter<string>();
 
+  withShoppingList: boolean = false;
+
   constructor(private route: ActivatedRoute,
               private router: Router) {
   }
@@ -31,6 +34,6 @@ export class ListComponent {
   }
 
   showSet(modelId: string): void {
-    this.router.navigate([modelId], {relativeTo: this.route});
+    this.router.navigate([modelId, this.withShoppingList], {relativeTo: this.route});
   }
 }
