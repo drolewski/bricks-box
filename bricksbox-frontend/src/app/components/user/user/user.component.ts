@@ -7,20 +7,23 @@ import {BuildSetModel} from '../../../model/build-set.model';
 @Component({
   selector: 'app-user',
   template: `
-    <div *ngIf="ownedPieces && userSets && buildingPlans">
+    <div *ngIf="ownedPieces && userSets && buildingPlans && canBuildSet">
       <mat-tab-group>
-        <mat-tab label="List klocków ({{ownedPiecesLength}})">
+        <mat-tab label="List klocków">
           <app-pieces-table [pieces]="ownedPieces"></app-pieces-table>
         </mat-tab>
-        <!--      <mat-tab label="Plan zakupu ({{this.shoppingPieces.length}})">-->
-        <!--        <app-pieces-table [pieces]="shoppingPieces"></app-pieces-table>-->
-        <!--      </mat-tab>-->
         <mat-tab label="Posiadane zestawy ({{userSetsLength}})">
           <app-set-table [sets]="userSets"></app-set-table>
+        </mat-tab>
+        <mat-tab label="Zestawy możliwe do budowy ({{canBuildSetLength}})">
+          <app-set-table [sets]="canBuildSet"></app-set-table>
         </mat-tab>
         <mat-tab label="Plan budowania ({{buildingPlansLength}})">
           <app-build-plans-table [sets]="buildingPlans" (deleteEvent)="onDelete($event)"></app-build-plans-table>
         </mat-tab>
+        <!--      <mat-tab label="Plan zakupu ({{this.shoppingPieces.length}})">-->
+        <!--        <app-pieces-table [pieces]="shoppingPieces"></app-pieces-table>-->
+        <!--      </mat-tab>-->
       </mat-tab-group>
     </div>
   `,
@@ -33,14 +36,7 @@ export class UserComponent implements OnInit {
   shoppingPieces: Piece[];
   userSets: SetModel[];
   buildingPlans: BuildSetModel[];
-
-  get ownedPiecesLength(): number {
-    return this.ownedPieces ? this.ownedPieces.length : 0;
-  }
-
-  get shoppingPiecesLength(): number {
-    return this.shoppingPieces ? this.shoppingPieces.length : 0;
-  }
+  canBuildSet: SetModel[];
 
   get userSetsLength(): number {
     return this.userSets ? this.userSets.length : 0;
@@ -48,6 +44,10 @@ export class UserComponent implements OnInit {
 
   get buildingPlansLength(): number {
     return this.buildingPlans ? this.buildingPlans.length : 0;
+  }
+
+  get canBuildSetLength(): number {
+    return this.canBuildSet ? this.canBuildSet.length : 0;
   }
 
   constructor(private userService: UserService, private changeDetector: ChangeDetectorRef) {
@@ -71,6 +71,11 @@ export class UserComponent implements OnInit {
 
     this.userService.getUserBuildingPlans().subscribe(sets => {
       this.buildingPlans = sets;
+      this.changeDetector.detectChanges();
+    });
+
+    this.userService.getUserCanBuildSet().subscribe(sets => {
+      this.canBuildSet = sets;
       this.changeDetector.detectChanges();
     });
   }

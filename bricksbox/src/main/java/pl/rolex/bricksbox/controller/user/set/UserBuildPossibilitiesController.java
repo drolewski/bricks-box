@@ -20,8 +20,8 @@ public class UserBuildPossibilitiesController {
     private final BuildPossibilitiesService buildPossibilitiesService;
 
     @GetMapping("/{withShoppingList}")
-    public Mono<ResponseEntity<?>> get(@RequestBody UserTokenRequest token, @PathVariable boolean withShoppingList) {
-        return buildPossibilitiesService.get(token.getToken(), withShoppingList).flatMap(sets -> {
+    public Mono<ResponseEntity<?>> get(@RequestHeader("Authorization") String token, @PathVariable boolean withShoppingList) {
+        return buildPossibilitiesService.get(token, withShoppingList).flatMap(sets -> {
             if (!Collections.isEmpty(sets)) {
                 return userBuildPossibilities(sets);
             }

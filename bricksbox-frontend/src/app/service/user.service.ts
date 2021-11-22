@@ -17,6 +17,7 @@ export class UserService {
   private readonly getUserSetsUrl: string = `${environment.baseUrl}api/user/sets`
   private readonly getUserBuildingPlansUrl: string = `${environment.baseUrl}api/user/building-plans`
   private readonly userLoginUrl: string = `${environment.baseUrl}api/user/login`
+  private readonly canUserBuildUrl: string = `${environment.baseUrl}api/user/build-possibilities/false`
 
   constructor(private http: HttpClient) {
   }
@@ -62,5 +63,9 @@ export class UserService {
     this.http.post<{token: string}>(this.userLoginUrl, {userName: login, password: password}).subscribe(response => {
       localStorage.setItem("token", response.token);
     });
+  }
+
+  getUserCanBuildSet(): Observable<SetModel[]> {
+    return this.http.get<SetModel[]>(this.canUserBuildUrl, {headers: new HttpHeaders().append("Authorization", localStorage.getItem("token") as string)});
   }
 }
