@@ -20,7 +20,7 @@ public class UserSetsController {
     }
 
     @GetMapping("")
-    public Mono<ResponseEntity<?>> getUserSets(@RequestBody UserTokenRequest tokenRequest){
-        return this.ownSetService.getSets(tokenRequest);
+    public Mono<ResponseEntity<?>> getUserSets(@RequestHeader("Authorization") String token){
+        return this.ownSetService.getSets(token);
     }
 }

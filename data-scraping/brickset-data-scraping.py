@@ -5,6 +5,7 @@ import math
 import os.path
 import re
 import sys
+import dns
 from datetime import date, datetime
 
 import requests

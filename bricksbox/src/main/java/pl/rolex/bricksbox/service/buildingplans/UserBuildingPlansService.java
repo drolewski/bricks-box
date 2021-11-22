@@ -21,10 +21,10 @@ public class UserBuildingPlansService {
     private final UserRepository userRepository;
     private final SetRepository setRepository;
 
-    public Mono<ResponseEntity<?>> getBuildingPlans(UserTokenRequest tokenRequest) {
+    public Mono<ResponseEntity<?>> getBuildingPlans(String token) {
         try {
-            if (jsonWebToken.isTokenValid(tokenRequest.getToken())) {
-                var userName = jsonWebToken.getUsernameFromToken(tokenRequest.getToken());
+            if (jsonWebToken.isTokenValid(token)) {
+                var userName = jsonWebToken.getUsernameFromToken(token);
                 return this.userRepository.findByUserName(userName)
                         .flatMap(this::getUserBuildingPlans);
             }
@@ -35,7 +35,7 @@ public class UserBuildingPlansService {
     }
 
     private Mono<ResponseEntity<?>> getUserBuildingPlans(User user) {
-        return Mono.just(ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(user.getBuildPlans()));
+        return Mono.just(ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(user.getBuildPlans().stream().distinct()));
     }
 
     private Mono<ResponseEntity<?>> unauthorized() {
@@ -70,10 +70,10 @@ public class UserBuildingPlansService {
                 .then(this.userRepository.save(user).then(Mono.just(ResponseEntity.ok().build())));
     }
 
-    public Mono<ResponseEntity<?>> deleteBuildingPlan(UserTokenRequest tokenRequest, String modelId) {
+    public Mono<ResponseEntity<?>> deleteBuildingPlan(String token, String modelId) {
         try {
-            if (jsonWebToken.isTokenValid(tokenRequest.getToken())) {
-                var userName = jsonWebToken.getUsernameFromToken(tokenRequest.getToken());
+            if (jsonWebToken.isTokenValid(token)) {
+                var userName = jsonWebToken.getUsernameFromToken(token);
                 return this.userRepository.findByUserName(userName)
                         .flatMap(user -> deleteUserBuildingPlan(user, modelId));
             }
@@ -104,7 +104,7 @@ public class UserBuildingPlansService {
 
     private Mono<ResponseEntity<?>> changeUserBuildingStatus(User user, String modelId) {
         user.getBuildPlans().stream().filter(set -> set.getModelId().equals(modelId))
-                .findFirst().ifPresent(s -> s.setBuilt(changeState(s)));
+                .forEach(s -> s.setBuilt(changeState(s)));
         return this.userRepository.save(user).then(Mono.just(ResponseEntity.ok().build()));
     }
 

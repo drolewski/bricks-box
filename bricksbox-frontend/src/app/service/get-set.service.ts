@@ -17,7 +17,7 @@ export class GetSetService {
   getSet(modelId: string, withShoppingList: boolean): Observable<UserSet> {
     return this.http.get<UserSet>(
       this.requestUrl(modelId, withShoppingList),
-      {headers: new HttpHeaders().append("Authorization", environment.token)}
+      {headers: new HttpHeaders().append("Authorization", localStorage.getItem("token") as string)}
     );
   }
 

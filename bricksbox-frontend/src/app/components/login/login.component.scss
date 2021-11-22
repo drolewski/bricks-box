@@ -1,0 +1,11 @@
+:host {
+  align-self: center;
+}
+.login-div {
+  display: flex;
+  height: 400px;
+  width: 400px;
+  justify-content: center;
+  align-self: center;
+  flex-direction: column;
+}

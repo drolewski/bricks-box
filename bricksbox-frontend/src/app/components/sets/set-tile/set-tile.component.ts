@@ -5,9 +5,13 @@ import {SetModel} from '../../../model/set.model';
   selector: 'app-set-tile',
   template: `
     <div class="tile">
-      <div class="header">
-        <div class="model-name">{{ set.name }}</div>
-        <div class="model-theme">{{ set.theme }}</div>
+      <div class="header-with-button">
+        <div class="header">
+          <div class="model-name">{{ set.name }}</div>
+          <div class="model-theme">{{ set.theme }}</div>
+        </div>
+        <app-own-set [setId]="set.modelId"></app-own-set>
+        <app-plan-build-set [setId]="set.modelId"></app-plan-build-set>
       </div>
       <div class="model-image">
         <img src="{{ set.img_link }}" alt="{{ set.name }}">
@@ -26,10 +30,6 @@ export class SetTileComponent implements OnInit {
 
   @Input() set: SetModel;
 
-  constructor() {
-  }
-
   ngOnInit(): void {
   }
-
 }

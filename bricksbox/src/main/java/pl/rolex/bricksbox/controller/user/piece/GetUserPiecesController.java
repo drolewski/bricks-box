@@ -15,7 +15,8 @@ public class GetUserPiecesController {
     private final GetUserPiecesService getUserPiecesService;
 
     @GetMapping("/{withShoppingList}")
-    public Mono<ResponseEntity<?>> getPieces(@RequestBody UserTokenRequest request, @PathVariable boolean withShoppingList) {
-        return this.getUserPiecesService.getPieces(request, withShoppingList);
+    public Mono<ResponseEntity<?>> getPieces(@PathVariable boolean withShoppingList,
+                                              @RequestHeader("Authorization") String token) {
+        return this.getUserPiecesService.getPieces(token, withShoppingList);
     }
 }

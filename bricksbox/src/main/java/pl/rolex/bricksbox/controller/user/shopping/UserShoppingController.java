@@ -17,8 +17,8 @@ public class UserShoppingController {
     private final UserShoppingService userShoppingService;
 
     @GetMapping("")
-    public Mono<ResponseEntity<?>> get(@RequestBody UserTokenRequest tokenRequest) {
-        return userShoppingService.getShoppingList(tokenRequest);
+    public Mono<ResponseEntity<?>> get(@RequestHeader("Authorization") String token) {
+        return userShoppingService.getShoppingList(token);
     }
 
     @PostMapping("update")

@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  baseUrl: 'http://localhost:8080/'
+  baseUrl: 'http://localhost:8080/',
+  token: 'eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjpbIkFETUlOIl0sInN1YiI6ImN6cm9sZXdza2kiLCJpYXQiOjE2Mzc2MTc1OTYsImV4cCI6MTYzNzcwMzk5Nn0.X9w0FZAzFZFo7qoB29rnEb2aKTT1WaY3JxvCQ6nR-eqY6soSEew98C5t2Y3EZgIlw5AghTodSZDpn2AsRTMyYQ'
 };
 
 /*

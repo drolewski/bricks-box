@@ -31,7 +31,7 @@ import {Piece} from '../../../model/piece.model';
 
       <ng-container matColumnDef="img">
         <th mat-header-cell *matHeaderCellDef>Zdjęcie</th>
-        <td mat-cell *matCellDef="let row"><img src="{{ row.img_url }}" alt="{{ row.element }}"></td>
+        <td mat-cell *matCellDef="let row"><img src="{{ row.img_url || row.imgUrl }}" alt="{{ row.element }}"></td>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="columnsDef"></tr>

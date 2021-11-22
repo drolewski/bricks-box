@@ -20,8 +20,8 @@ public class UserBuildingPlansController {
     }
 
     @DeleteMapping("/{modelId}")
-    public Mono<ResponseEntity<?>> deleteBuildingPlan(@RequestBody UserTokenRequest tokenRequest, @PathVariable String modelId) {
-        return this.userBuildingPlansService.deleteBuildingPlan(tokenRequest, modelId);
+    public Mono<ResponseEntity<?>> deleteBuildingPlan(@RequestHeader("Authorization") String token, @PathVariable String modelId) {
+        return this.userBuildingPlansService.deleteBuildingPlan(token, modelId);
     }
 
     @PostMapping("/{modelId}/status")
@@ -30,7 +30,7 @@ public class UserBuildingPlansController {
     }
 
     @GetMapping("")
-    public Mono<ResponseEntity<?>> getBuildingPlans(@RequestBody UserTokenRequest tokenRequest) {
-        return this.userBuildingPlansService.getBuildingPlans(tokenRequest);
+    public Mono<ResponseEntity<?>> getBuildingPlans(@RequestHeader("Authorization") String token) {
+        return this.userBuildingPlansService.getBuildingPlans(token);
     }
 }

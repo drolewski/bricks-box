@@ -29,10 +29,10 @@ public class GetUserPiecesService {
     private final UserRepository userRepository;
     private final JSONWebToken jsonWebToken;
 
-    public Mono<ResponseEntity<?>> getPieces(UserTokenRequest request, boolean withShoppingList) {
+    public Mono<ResponseEntity<?>> getPieces(String token, boolean withShoppingList) {
         try {
-            if (jsonWebToken.isTokenValid(request.getToken())) {
-                final var username = jsonWebToken.getUsernameFromToken(request.getToken());
+            if (jsonWebToken.isTokenValid(token)) {
+                final var username = jsonWebToken.getUsernameFromToken(token);
                 return this.userRepository.findByUserName(username)
                         .defaultIfEmpty(EmptyUserSingleton.getInstance())
                         .flatMap(user -> getUserPieces(user, withShoppingList))

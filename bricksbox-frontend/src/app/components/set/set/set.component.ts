@@ -13,6 +13,8 @@ import {MatCheckboxChange} from '@angular/material/checkbox';
       <div class="piece-header">
         <h1>{{ set.name }} ({{ set.year }})</h1>
         <h2>{{ set.theme }}</h2>
+        <app-own-set [setId]="set.modelId"></app-own-set>
+        <app-plan-build-set [setId]="set.modelId"></app-plan-build-set>
       </div>
       <div class="piece-body">
         <div class="model-image">
@@ -23,7 +25,7 @@ import {MatCheckboxChange} from '@angular/material/checkbox';
           </div>
         </div>
       </div>
-      <mat-checkbox [checked]="withShoppingList" (change)="onCheckboxChange($event)">Dodaj listę zakupów</mat-checkbox>
+<!--      <mat-checkbox [checked]="withShoppingList" (change)="onCheckboxChange($event)">Dodaj listę zakupów</mat-checkbox>-->
       <mat-tab-group>
         <mat-tab label="List klocków ({{set.piecesNum}})">
           <app-pieces-table [pieces]="set.pieces"></app-pieces-table>
@@ -55,7 +57,6 @@ export class SetComponent implements OnInit {
     const withShoppingList = this.route.snapshot.paramMap.get('withShoppingList');
     if (modelId && withShoppingList) {
       this.withShoppingList = withShoppingList === "true";
-      console.log(this.withShoppingList);
       this.modelId = modelId;
       this.getSetService.getSet(this.modelId, this.withShoppingList).subscribe(s => this.set = s);
       return;

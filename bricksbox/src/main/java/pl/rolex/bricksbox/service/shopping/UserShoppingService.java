@@ -65,10 +65,10 @@ public class UserShoppingService {
         return Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
     }
 
-    public Mono<ResponseEntity<?>> getShoppingList(final UserTokenRequest tokenRequest) {
+    public Mono<ResponseEntity<?>> getShoppingList(final String token) {
         try {
-            if (jsonWebToken.isTokenValid(tokenRequest.getToken())) {
-                var userName = jsonWebToken.getUsernameFromToken(tokenRequest.getToken());
+            if (jsonWebToken.isTokenValid(token)) {
+                var userName = jsonWebToken.getUsernameFromToken(token);
                 return this.userRepository.findByUserName(userName)
                         .flatMap(this::getUserShoppingList);
             }

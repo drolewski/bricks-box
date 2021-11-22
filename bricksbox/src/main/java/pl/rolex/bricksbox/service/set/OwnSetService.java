@@ -80,10 +80,10 @@ public class OwnSetService {
         );
     }
 
-    public Mono<ResponseEntity<?>> getSets(UserTokenRequest tokenRequest) {
+    public Mono<ResponseEntity<?>> getSets(String token) {
         try {
-            if (this.jsonWebToken.isTokenValid(tokenRequest.getToken())) {
-                var userName = jsonWebToken.getUsernameFromToken(tokenRequest.getToken());
+            if (this.jsonWebToken.isTokenValid(token)) {
+                var userName = jsonWebToken.getUsernameFromToken(token);
                 return this.userRepository.findByUserName(userName)
                         .flatMap(this::getSets);
             }
